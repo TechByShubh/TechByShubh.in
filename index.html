@@ -2,221 +2,227 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TechByShubh</title>
 
-<link rel="icon" href="favicon.png" type="image/png">
-  
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;400&display=swap" rel="stylesheet" />
+  <link rel="icon" href="favicon.png" type="image/png">
 
   <style>
-    html, body {
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
       height: 100%;
-      font-family: 'Poppins', sans-serif;
-      background: radial-gradient(circle at top left, #1e0033, #000);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
       overflow: hidden;
-      color: white;
     }
 
-    /* Background Aurora */
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
+    .hero {
       height: 100%;
-      background: radial-gradient(circle, rgba(255, 0, 150, 0.1), transparent 40%),
-                  radial-gradient(circle, rgba(0, 255, 255, 0.1), transparent 40%);
-      animation: auroraMove 20s ease-in-out infinite;
-      z-index: 0;
-    }
-
-    @keyframes auroraMove {
-      0% { transform: translate(0, 0); }
-      50% { transform: translate(10%, 10%); }
-      100% { transform: translate(0, 0); }
-    }
-
-    .container {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      height: 100vh;
       display: flex;
+      justify-content: center;
       align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .content-box {
       text-align: center;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(15px);
-      border-radius: 20px;
-      padding: 30px 20px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.5);
       position: relative;
-      max-width: 400px;
-      width: 100%;
-      transform-style: preserve-3d;
-      transition: transform 0.3s;
-    }
-
-    .content-box:hover {
-      transform: rotateY(3deg) rotateX(3deg);
-    }
-
-    .logo {
-      width: 60px;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    h1 {
-      font-size: 2rem;
-      margin: 10px 0;
-      color: white;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.6);
-    }
-
-    .subtext {
-      font-size: 1rem;
-      color: #ddd;
-    }
-
-    .countdown {
-      margin-top: 20px;
-      font-size: 1.3rem;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .countdown div {
-      background: rgba(0,0,0,0.5);
-      padding: 10px;
-      border-radius: 10px;
-      min-width: 50px;
-      text-align: center;
-    }
-
-    canvas#particles {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      padding: 20px;
       z-index: 1;
     }
 
-    .noise {
+    .content-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 90%;
+      margin: 0 auto;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      z-index: 2;
+    }
+
+    .hero img {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      opacity: 0;
+      animation: fadeIn 2s ease-out forwards, glow 2s ease-in-out infinite alternate;
+      text-shadow: 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #0ff;
+    }
+
+    .hero p {
+      font-size: 1.5rem;
+      margin-top: 10px;
+      opacity: 0;
+      animation: fadeIn 3s ease-out forwards;
+      animation-delay: 1.5s;
+    }
+
+    .countdown {
+      margin-top: 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #00ffff;
+      text-shadow: 0 0 8px #0ff;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+      }
+      to {
+        text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+      }
+    }
+
+    /* Bubble container */
+    .bubbles {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
-      opacity: 0.04;
-      z-index: 3;
-      pointer-events: none;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: rise 10s infinite ease-in;
+      filter: blur(2px);
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    /* Desktop size */
+    @media (min-width: 769px) {
+      .content-wrapper {
+        max-width: 600px;
+      }
+    }
+
+    /* Mobile enhancements */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 10px;
+      }
+
+      .content-wrapper {
+        padding: 30px 20px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 20px;
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1.1rem;
+      }
+
+      .countdown {
+        font-size: 1rem;
+      }
+
+      .hero img {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.6rem; }
+      .hero p { font-size: 0.95rem; }
+      .countdown { font-size: 0.9rem; }
+      .hero img { width: 30px; height: 30px; }
     }
   </style>
 </head>
 <body>
-  <canvas id="particles"></canvas>
-  <div class="noise"></div>
-  <div class="container">
-    <div class="content-box" id="tilt">
-      <img src="logo.png" alt="Logo" class="logo" />
+  <div class="hero">
+    <div class="bubbles">
+      <!-- Generate bubble elements via JavaScript -->
+    </div>
+    <div class="content-wrapper">
+      <img src="logo.png" alt="Company Logo" />
       <h1>LAUNCHING SOON</h1>
-      <div class="subtext">~Will be Live on 27 July 2025</div>
-      <div class="subtext">TechByShubh</div>
-      <div class="countdown">
-        <div><span id="days">00</span><br>Days</div>
-        <div><span id="hours">00</span><br>Hrs</div>
-        <div><span id="minutes">00</span><br>Min</div>
-        <div><span id="seconds">00</span><br>Sec</div>
-      </div>
+      <p>~Will be Live on 27 July 2025.</p>
+      <p>-TechByShubh</p>
+      <div class="countdown" id="countdown">Loading countdown...</div>
     </div>
   </div>
 
   <script>
-    // Countdown Timer
-    const countdownDate = new Date("Jul 27, 2025 00:00:00").getTime();
-    const timer = setInterval(() => {
+    // Countdown Script
+    function updateCountdown() {
+      const launchDate = new Date('2025-07-27T00:00:00').getTime();
       const now = new Date().getTime();
-      const distance = countdownDate - now;
+      const timeLeft = launchDate - now;
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      document.getElementById("days").innerText = days;
-      document.getElementById("hours").innerText = hours;
-      document.getElementById("minutes").innerText = minutes;
-      document.getElementById("seconds").innerText = seconds;
-
-      if (distance < 0) clearInterval(timer);
-    }, 1000);
-
-    // Particles Effect
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const particlesArray = [];
-
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 1;
-        this.speedX = Math.random() * 1 - 0.5;
-        this.speedY = Math.random() * 1 - 0.5;
+      if (timeLeft <= 0) {
+        document.getElementById("countdown").innerHTML = "We're live!";
+        return;
       }
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-      }
-      draw() {
-        ctx.fillStyle = "white";
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
+
+      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+      document.getElementById("countdown").innerHTML =
+        `Launching in ${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
-    function initParticles() {
-      for (let i = 0; i < 100; i++) {
-        particlesArray.push(new Particle());
-      }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Bubble generator
+    const bubbleContainer = document.querySelector('.bubbles');
+    for (let i = 0; i < 25; i++) {
+      const bubble = document.createElement('div');
+      bubble.classList.add('bubble');
+      const size = Math.random() * 20 + 10;
+      bubble.style.width = `${size}px`;
+      bubble.style.height = `${size}px`;
+      bubble.style.left = `${Math.random() * 100}%`;
+      bubble.style.animationDuration = `${6 + Math.random() * 5}s`;
+      bubble.style.animationDelay = `${Math.random() * 5}s`;
+      bubbleContainer.appendChild(bubble);
     }
-
-    function animateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < particlesArray.length; i++) {
-        particlesArray[i].update();
-        particlesArray[i].draw();
-      }
-      requestAnimationFrame(animateParticles);
-    }
-
-    initParticles();
-    animateParticles();
-
-    // Resize Canvas
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
   </script>
 </body>
 </html>
