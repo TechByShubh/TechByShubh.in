@@ -186,29 +186,29 @@
     </div>
   </div>
 
-  <script>
-    // Countdown Script
-    function updateCountdown() {
-      const launchDate = new Date('2025-07-27T00:00:00').getTime();
-      const now = new Date().getTime();
-      const timeLeft = launchDate - now;
+<script>
+  // Countdown Script
+  function updateCountdown() {
+    const launchDate = new Date('2025-07-27T23:59:00').getTime(); // Updated time to 27 July 11:59pm
+    const now = new Date().getTime();
+    const timeLeft = launchDate - now;
 
-      if (timeLeft <= 0) {
-        document.getElementById("countdown").innerHTML = "We're live!";
-        return;
-      }
-
-      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-      document.getElementById("countdown").innerHTML =
-        `Launching in ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    if (timeLeft <= 0) {
+      document.getElementById("countdown").innerHTML = "We're live!";
+      return;
     }
 
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+    document.getElementById("countdown").innerHTML =
+      `Launching in ${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
 
     // Bubble generator
     const bubbleContainer = document.querySelector('.bubbles');
