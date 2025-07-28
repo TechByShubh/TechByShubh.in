@@ -1,0 +1,283 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TechByShubh</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <script src="https://kit.fontawesome.com/97ebdf5864.js" crossorigin="anonymous"></script>
+  
+  <!-- Firebase SDKs - Updated to use consistent v10 modular SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDz6H1ApCd5uQRqiV1_wFSt5bpGLE_1C3E",
+      authDomain: "techbyshubhin-19573.firebaseapp.com",
+      projectId: "techbyshubhin-19573",
+      storageBucket: "techbyshubhin-19573.appspot.com",
+      messagingSenderId: "11220560315",
+      appId: "1:11220560315:web:3784befdffeaaba018bc9e",
+      measurementId: "G-42JCX6SPR9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Set persistence to local storage for consistent auth state
+    setPersistence(auth, browserLocalPersistence);
+
+    // Check if user is already logged in when page loads
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is already logged in, redirect to userinfo
+        window.location.href = "userinfo.html";
+      }
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const signInBtn = document.getElementById("googleSignIn");
+
+      signInBtn.addEventListener("click", async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
+
+          // Save/update user data to Firestore
+          const ref = doc(db, "users", user.uid);
+          const snap = await getDoc(ref);
+          if (!snap.exists()) {
+            await setDoc(ref, {
+              name: user.displayName || "",
+              email: user.email || "",
+              phone: user.phoneNumber || "",
+              photoURL: user.photoURL || "",
+              createdAt: new Date().toISOString(),
+              lastLogin: new Date().toISOString()
+            });
+          } else {
+            // Update last login
+            await setDoc(ref, {
+              lastLogin: new Date().toISOString()
+            }, { merge: true });
+          }
+
+          // Redirect will happen automatically via onAuthStateChanged
+        } catch (error) {
+          alert("Login error: " + error.message);
+          console.error(error);
+        }
+      });
+    });
+
+    // Make goBack function available globally
+    window.goBack = function() {
+      if (document.referrer) {
+        window.location.href = document.referrer;
+      } else {
+        window.location.href = "Shop.html";
+      }
+    };
+  </script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      background: url(./bg.png) no-repeat;
+      background-position: center;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      position: relative;
+      width: 400px;
+      height: 580px;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      border-radius: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      font-size: 1.5em;
+      color: #fff;
+      cursor: pointer;
+      z-index: 10;
+      padding: 10px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(5px);
+    }
+
+    .close-btn:hover {
+      transform: scale(1.2);
+      color: #f33;
+      box-shadow:
+        0 0 5px #f33,
+        0 0 10px #f33,
+        0 0 20px #f33,
+        0 0 40px #f33;
+    }
+
+    .brand {
+      color: #fff;
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-bottom: -10px;
+    }
+
+    h2 {
+      color: #fff;
+      font-size: 2em;
+      text-transform: uppercase;
+      padding: 20px 0 10px;
+    }
+
+    .form-group {
+      position: relative;
+      width: 330px;
+      margin: 30px 0;
+      border-bottom: 3px solid #fff;
+    }
+
+    .form-group input {
+      width: 100%;
+      height: 50px;
+      padding: 0 35px 0 10px;
+      font-size: 1.2em;
+      background-color: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+    }
+
+    .form-group label {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      font-size: 1.2em;
+      color: #fff;
+      transition: 0.5s;
+    }
+
+    input:focus ~ label,
+    input:valid ~ label {
+      top: -5px;
+    }
+
+    .form-group i {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      color: #fff;
+      font-size: 1.2em;
+    }
+
+    p {
+      text-align: center;
+      color: #fff;
+      margin: 10px 0;
+    }
+
+    p > a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    p > a:hover {
+      text-decoration: underline;
+      font-style: italic;
+    }
+
+    #btn, #googleSignIn {
+      width: 100%;
+      height: 50px;
+      border-radius: 40px;
+      border: none;
+      font-size: 1.2em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: all 0.5s;
+    }
+
+    #btn:hover, #googleSignIn:hover {
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
+    }
+
+    #googleSignIn {
+      background-color: white;
+      color: #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="close-btn" onclick="goBack()">
+      <i class="fas fa-times"></i>
+    </div>
+    <div class="brand">TechByShubh</div>
+    <h2>Login</h2>
+    <form onsubmit="return false;">
+      <div class="form-group">
+        <input type="email" required />
+        <label>Email</label>
+        <i class="fa-solid fa-envelope"></i>
+      </div>
+
+      <div class="form-group">
+        <input type="password" required />
+        <label>Password</label>
+        <i class="fa-solid fa-lock"></i>
+      </div>
+
+      <p>
+        <input type="checkbox" />Remember Me
+      </p>
+      <p>
+        <a href="#">Forget Password</a>
+      </p>
+
+      <input id="btn" type="submit" value="Login" />
+      <button id="googleSignIn"><i class="fab fa-google"></i> Sign in with Google</button>
+
+      <p>Don't have an account? <a href="#">Register</a></p>
+    </form>
+  </div>
+</body>
+</html>
