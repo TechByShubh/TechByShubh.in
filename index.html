@@ -2,170 +2,714 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TechByShubh</title>
-  <link rel="icon" href="favicon.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fasal Sathi — AI Wand for Indian Farmers</title>
+  <meta name="description" content="Fasal Sathi is an AI-powered soil & crop diagnostic wand built for Indian farmers. Detect NPK, pH, moisture, diseases — and get Hindi advisory instantly." />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    /* ── Reset & Base ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #04120a;
+      --bg2:      #08201200;
+      --accent:   #00d250;
+      --gold:     #dcaf00;
+      --text:     #f0f0e6;
+      --muted:    #8ca091;
+      --glass-bg: rgba(0, 210, 80, 0.06);
+      --glass-border: rgba(0, 210, 80, 0.22);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
     }
 
+    html { scroll-behavior: smooth; }
+
     body {
-      background: #0c0c0c;
-      color: #ffffff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated leaf background ──────────────────────────────── */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
       overflow: hidden;
+      pointer-events: none;
+    }
+
+    .leaf {
+      position: absolute;
+      opacity: 0.07;
+      animation: floatLeaf linear infinite;
+    }
+
+    @keyframes floatLeaf {
+      0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+      5%   { opacity: 0.07; }
+      95%  { opacity: 0.07; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ── Radial glow blobs ─────────────────────────────────────── */
+    .glow {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-1 { width: 500px; height: 500px; background: rgba(0,210,80,0.07); top: -120px; left: -100px; }
+    .glow-2 { width: 400px; height: 400px; background: rgba(220,175,0,0.06); bottom: 10%; right: -80px; animation: glowPulse 6s ease-in-out infinite; }
+    .glow-3 { width: 300px; height: 300px; background: rgba(0,210,80,0.05); top: 40%; left: 50%; transform: translateX(-50%); }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50%       { opacity: 1.0; transform: scale(1.1); }
+    }
+
+    /* ── Layout ────────────────────────────────────────────────── */
+    .page { position: relative; z-index: 1; }
+
+    /* ── Navbar ────────────────────────────────────────────────── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      backdrop-filter: blur(12px);
+      background: rgba(4,18,10,0.7);
+      border-bottom: 1px solid rgba(0,210,80,0.12);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+    }
+    .nav-logo svg { width: 28px; height: 28px; }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── Hero ──────────────────────────────────────────────────── */
+    .hero {
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px 40px;
+      gap: 0;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,210,80,0.1);
+      border: 1px solid var(--glass-border);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 0.78rem;
+      color: var(--accent);
+      margin-bottom: 28px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .hero h1 span.green { color: var(--accent); }
+    .hero h1 span.gold  { color: var(--gold); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.65;
+      margin-bottom: 44px;
+      margin-top: 14px;
+    }
+
+    /* ── Download button ───────────────────────────────────────── */
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--accent), #00a83e);
+      color: #03120a;
+      font-size: 1.15rem;
+      font-weight: 800;
+      padding: 18px 44px;
+      border-radius: 16px;
+      text-decoration: none;
+      box-shadow: 0 0 40px rgba(0,210,80,0.35), 0 4px 20px rgba(0,0,0,0.4);
+      transition: transform 0.18s, box-shadow 0.18s;
+      letter-spacing: 0.3px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-download::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      border-radius: inherit;
+    }
+    .btn-download:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 0 60px rgba(0,210,80,0.5), 0 8px 28px rgba(0,0,0,0.5);
+    }
+    .btn-download:active { transform: scale(0.98); }
+
+    .btn-download svg { width: 22px; height: 22px; flex-shrink: 0; }
+
+    .download-note {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .download-note span { color: var(--accent); }
+
+    /* ── Scroll hint ───────────────────────────────────────────── */
+    .scroll-hint {
+      margin-top: 52px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(6px); }
+    }
+
+    /* ── Glass card ────────────────────────────────────────────── */
+    .glass {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--glass-shadow);
+    }
+
+    /* ── Features section ──────────────────────────────────────── */
+    .section {
+      padding: 80px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: clamp(1.7rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 48px;
+      line-height: 1.2;
+    }
+
+    /* ── Benefits grid ─────────────────────────────────────────── */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .benefit-card {
+      padding: 22px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .benefit-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(0,210,80,0.1);
+    }
+
+    .benefit-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: rgba(0,210,80,0.12);
+      border: 1px solid rgba(0,210,80,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .benefit-text {
+      font-size: 0.93rem;
+      line-height: 1.55;
+      color: rgba(240,240,230,0.85);
+    }
+
+    .benefit-text strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 3px;
+      font-size: 0.97rem;
+    }
+
+    /* ── Stats row ─────────────────────────────────────────────── */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 24px;
+      margin: 0 auto 80px;
+      max-width: 900px;
+      padding: 0 24px;
+    }
+
+    .stat-card {
+      flex: 1;
+      min-width: 160px;
+      max-width: 200px;
+      padding: 28px 20px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-num span { font-size: 1.4rem; }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ── How it works ──────────────────────────────────────────── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      counter-reset: step;
+    }
+
+    .step-card {
+      padding: 28px 22px;
+      position: relative;
+      counter-increment: step;
+    }
+
+    .step-card::before {
+      content: counter(step);
+      position: absolute;
+      top: -14px;
+      left: 22px;
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      color: #03120a;
+      border-radius: 50%;
+      font-weight: 900;
+      font-size: 0.85rem;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .container {
+    .step-icon { font-size: 2rem; margin-bottom: 12px; }
+    .step-title { font-weight: 700; font-size: 1rem; margin-bottom: 8px; }
+    .step-desc  { font-size: 0.85rem; color: var(--muted); line-height: 1.55; }
+
+    /* ── CTA bottom ────────────────────────────────────────────── */
+    .cta-section {
       text-align: center;
-      max-width: 90%;
-      padding: 2em;
+      padding: 80px 24px;
+      max-width: 700px;
+      margin: 0 auto;
     }
-
-    h1 {
-      font-size: 2.5em;
-      text-shadow: 0 0 20px #ffffffaa;
+    .cta-section h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900;
+      margin-bottom: 16px;
+      line-height: 1.15;
     }
+    .cta-section p { color: var(--muted); margin-bottom: 36px; font-size: 1rem; line-height: 1.6; }
 
-    p {
-      font-size: 1.2em;
-      color: #cccccc;
-      margin-top: 0.5em;
-      margin-bottom: 2em;
-    }
-
-    .glow-button {
-      padding: 1em 2em;
-      margin: 1em;
-      border: none;
-      background: white;
-      color: black;
-      font-weight: bold;
-      font-size: 1em;
-      border-radius: 8px;
-      box-shadow: 0 0 20px white;
-      cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .glow-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 40px white;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .mobile-section {
-      display: none;
-      flex-direction: column;
+    /* ── Footer ────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid rgba(0,210,80,0.1);
+      padding: 28px 40px;
+      display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      justify-content: center;
-      animation: fadeIn 1s ease forwards;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.82rem;
+      color: var(--muted);
     }
+    footer a { color: var(--accent); text-decoration: none; }
 
-    .mobile-section h2 {
-      font-size: 2em;
-      margin-bottom: 1em;
-      color: #ffffff;
-      text-shadow: 0 0 20px #ffffffbb;
-    }
-
-    .mobile-section p {
-      font-size: 1.1em;
-      color: #ccc;
-      margin-bottom: 2em;
-    }
-
-    .insta-link {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.8em 1.2em;
-      border: 2px solid white;
-      border-radius: 8px;
-      text-decoration: none;
-      color: white;
-      font-weight: bold;
-      font-size: 1em;
-      box-shadow: 0 0 20px white;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .insta-link:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px white;
-    }
-
-    .insta-link img {
-      width: 24px;
-      height: 24px;
-      margin-right: 10px;
-      filter: brightness(0) invert(1);
-    }
-
-        .back-arrow {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background-color: white;
-      color: black;
-      font-size: 1.5em;
-      padding: 0.3em 0.7em;
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow: 0 0 20px white;
-      transition: transform 0.3s, box-shadow 0.3s;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .back-arrow:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 40px white;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* ── Responsive ────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 40px 16px 32px; }
+      .section { padding: 56px 16px; }
+      footer { flex-direction: column; text-align: center; }
     }
   </style>
 </head>
 <body>
-  <div class="container" id="main-content">
-    <h1>Are you on a Desktop/Laptop?</h1>
-    <p>This website is specifically designed for Desktops/Laptops for now!</p>
-    <button class="glow-button" onclick="redirectYes()">Yes</button>
-    <button class="glow-button" onclick="showMobileMessage()">No</button>
-  </div>
 
-  <div class="container mobile-section hidden" id="mobile-message">
-    <h2>📱 Mobile Version Launching Soon!</h2>
-    <p>For more info, stay updated with <strong>@techbyshubh.in</strong> on Instagram</p>
-    <a href="https://instagram.com/techbyshubh.in" class="insta-link" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram Logo">
-      Follow us on Instagram
+<!-- ── Animated background leaves (pure SVG/CSS, no images) ────── -->
+<div class="bg-canvas" id="bg"></div>
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+<div class="glow glow-3"></div>
+
+<div class="page">
+
+  <!-- ── Navbar ─────────────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-logo">
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14 2C8 2 4 7 4 12c0 6 5 10 10 14 5-4 10-8 10-14C24 7 20 2 14 2z" fill="#00d250" opacity="0.9"/>
+        <path d="M14 8v12M10 12c1.5-2 4-3 4-3s2.5 1 4 3" stroke="#03120a" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      Fasal Sathi
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How It Works</a>
+      <a href="#download">Download</a>
+    </div>
+  </nav>
+
+  <!-- ── Hero ───────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-badge">
+      <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#00d250"/></svg>
+      Made for Indian Farmers &nbsp;·&nbsp; Class X Student Project
+    </div>
+
+    <h1>
+      <span class="green">Fasal</span> <span class="gold">Sathi</span>
+    </h1>
+    <p style="font-size: clamp(1.1rem,3vw,1.6rem); color: var(--accent); font-weight:600; margin-bottom:4px; margin-top:2px;">
+      आपकी फसल का सबसे अच्छा दोस्त
+    </p>
+
+    <p class="hero-sub">
+      An AI-powered wand that reads your soil, identifies your crop, detects diseases —
+      and speaks personalised farming advice in Hindi. In seconds.
+    </p>
+
+    <a href="#download" class="btn-download" id="hero-dl">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Download the App — Free
     </a>
+    <p class="download-note">Android APK &nbsp;·&nbsp; <span>No sign-up needed</span> &nbsp;·&nbsp; ~52 MB</p>
+
+    <div class="scroll-hint">
+      <span>Scroll to explore</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#8ca091" stroke-width="2" stroke-linecap="round">
+        <path d="M4 6l4 4 4-4"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ── Stats ──────────────────────────────────────────────────── -->
+  <div class="stats-row">
+    <div class="stat-card glass">
+      <div class="stat-num">9<span>+</span></div>
+      <div class="stat-label">Soil Parameters</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-num">3<span>s</span></div>
+      <div class="stat-label">Avg Reading Time</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-num">2<span>×</span></div>
+      <div class="stat-label">Health APIs</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-num">100<span>%</span></div>
+      <div class="stat-label">Free & Open</div>
+    </div>
   </div>
 
-  <script>
-    function redirectYes() {
-      window.location.href = "Home.html";
-    }
+  <!-- ── Benefits ───────────────────────────────────────────────── -->
+  <section class="section" id="features">
+    <p class="section-label">Why Fasal Sathi</p>
+    <h2 class="section-title">Everything your crop needs, <br/>held in one hand</h2>
 
-    function showMobileMessage() {
-      document.getElementById('main-content').classList.add('hidden');
-      const mobile = document.getElementById('mobile-message');
-      mobile.classList.remove('hidden');
-      mobile.style.display = "flex";
-    }
-  </script>
+    <div class="benefits-grid">
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">🌱</div>
+        <div class="benefit-text">
+          <strong>Know your soil instantly</strong>
+          Measures Nitrogen, Phosphorus, Potassium, pH, moisture, temperature, EC, salinity & TDS — all in one reading.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">🔍</div>
+        <div class="benefit-text">
+          <strong>Identifies any crop from a photo</strong>
+          Just point the camera — Fasal Sathi recognises the plant species and its common local names automatically.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">🦠</div>
+        <div class="benefit-text">
+          <strong>Detects diseases before they spread</strong>
+          Powered by two AI health engines (Plant.id + Crop.Health) to catch fungal, bacterial, and pest issues early.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">🗣️</div>
+        <div class="benefit-text">
+          <strong>Speaks advice in Hindi</strong>
+          Gives a full 130-word farming advisory out loud — fertiliser names, doses, timings — in simple village Hindi.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">📱</div>
+        <div class="benefit-text">
+          <strong>Syncs wirelessly to your phone</strong>
+          Connects via Bluetooth to the Fasal Sathi app and pushes every soil reading in real time.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">📊</div>
+        <div class="benefit-text">
+          <strong>Tracks your soil health over time</strong>
+          Stores your last 3 scans and computes a Plant Care Score so you can see if your field is improving.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">🌦️</div>
+        <div class="benefit-text">
+          <strong>Shows live weather on the wand</strong>
+          Displays today's forecast — temperature, rain chance, and animated weather icon — right on the OLED screen.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">⚡</div>
+        <div class="benefit-text">
+          <strong>No app needed for basic use</strong>
+          The wand works fully standalone — insert probe, press button, hear advice. Phone app adds extra data visibility.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">🎙️</div>
+        <div class="benefit-text">
+          <strong>Voice-input crop name</strong>
+          Can't find the crop in the photo? Just say its name — the wand transcribes your voice and tailors the advice.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">💊</div>
+        <div class="benefit-text">
+          <strong>Specific treatment, not vague tips</strong>
+          Tells you exactly: "add half a spoon of copper oxychloride in 1 litre water, spray in the morning." Not just "use pesticide."
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">🔋</div>
+        <div class="benefit-text">
+          <strong>Auto-starts on power-up</strong>
+          No fumbling — the wand boots and is ready within 5 seconds of being switched on. No keyboard, no login.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">🇮🇳</div>
+        <div class="benefit-text">
+          <strong>Built for Indian conditions</strong>
+          Calibrated for Indian soil types, crops, and climate. Advisory always references local fertiliser names like Urea, DAP, MOP.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">🔓</div>
+        <div class="benefit-text">
+          <strong>Completely free to download</strong>
+          The mobile app is free — no subscription, no ads, no sign-up. Science belongs to farmers, not corporations.
+        </div>
+      </div>
+
+      <div class="benefit-card glass">
+        <div class="benefit-icon">🧒</div>
+        <div class="benefit-text">
+          <strong>Designed by a 15-year-old for the country</strong>
+          Fasal Sathi is a Class X student project from Dehradun, built with the belief that every farmer deserves an AI companion.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── How it works ───────────────────────────────────────────── -->
+  <section class="section" id="how" style="padding-top:0">
+    <p class="section-label">Simple to use</p>
+    <h2 class="section-title">From field to advice in 4 steps</h2>
+
+    <div class="steps">
+      <div class="step-card glass">
+        <div class="step-icon">🪛</div>
+        <div class="step-title">Insert the probe</div>
+        <div class="step-desc">Push the sensor prongs into your soil. The wand stabilises for 5 seconds to get accurate readings.</div>
+      </div>
+      <div class="step-card glass">
+        <div class="step-icon">🔘</div>
+        <div class="step-title">Press SCAN</div>
+        <div class="step-desc">One button press reads all 9 soil parameters — NPK, pH, moisture, temp, EC, salinity, TDS.</div>
+      </div>
+      <div class="step-card glass">
+        <div class="step-icon">📸</div>
+        <div class="step-title">Photograph your crop</div>
+        <div class="step-desc">Point the camera at the plant. Two AI engines identify the species and check for diseases or pests.</div>
+      </div>
+      <div class="step-card glass">
+        <div class="step-icon">🔊</div>
+        <div class="step-title">Listen to the advice</div>
+        <div class="step-desc">Fasal Sathi speaks a personalised Hindi advisory — what to add, how much, and when — right out loud.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Download CTA ───────────────────────────────────────────── -->
+  <section class="cta-section" id="download">
+    <div class="glass" style="padding: 52px 40px; border-radius: 28px;">
+      <p class="section-label" style="margin-bottom:16px">Get the app</p>
+      <h2>Take Fasal Sathi <br/><span style="color:var(--accent)">to your field today</span></h2>
+      <p style="margin-top:16px">
+        Download the companion app to see live soil readings on your phone, track your plant care score,
+        and trigger a scan from anywhere via Bluetooth.
+      </p>
+      <a href="https://github.com/TechByShubh/fasal-sathi/releases/latest/download/app-release.apk"
+         class="btn-download"
+         style="margin-top:8px; font-size:1.25rem; padding: 22px 56px;"
+         download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+          <line x1="12" y1="18" x2="12" y2="18" stroke-width="3"/>
+        </svg>
+        Download APK &nbsp; — &nbsp; Free
+      </a>
+      <p class="download-note" style="margin-top:18px">
+        Android 6.0+ &nbsp;·&nbsp; <span>Enable "Install from unknown sources"</span> in Settings before installing
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────────────── -->
+  <footer>
+    <div>© 2025 <strong style="color:var(--accent)">Fasal Sathi</strong> · Made with ❤️ by Shubh Kumar Jayaswal, Class X, DAV Dehradun</div>
+    <div>
+      <a href="mailto:shubhdo69@gmail.com">Contact</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/TechByShubh" target="_blank" rel="noopener">GitHub</a>
+      &nbsp;·&nbsp;
+      <span>techbyshubh.in</span>
+    </div>
+  </footer>
+
+</div><!-- /.page -->
+
+<!-- ── Leaf generator script ───────────────────────────────────── -->
+<script>
+  const bg = document.getElementById('bg');
+  const leafShapes = [
+    // Narrow leaf
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 60">
+      <path d="M15 2 C22 12 26 28 15 58 C4 28 8 12 15 2Z" fill="#00d250"/>
+      <line x1="15" y1="4" x2="15" y2="56" stroke="#04120a" stroke-width="1" opacity="0.5"/>
+    </svg>`,
+    // Wide leaf
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 40">
+      <path d="M25 2 C40 4 48 18 25 38 C2 18 10 4 25 2Z" fill="#008c38"/>
+      <line x1="25" y1="4" x2="25" y2="36" stroke="#04120a" stroke-width="1" opacity="0.5"/>
+    </svg>`,
+    // Thin blade
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 70">
+      <path d="M8 2 C13 20 13 48 8 68 C3 48 3 20 8 2Z" fill="#00b044"/>
+    </svg>`,
+  ];
+
+  for (let i = 0; i < 22; i++) {
+    const el = document.createElement('div');
+    el.classList.add('leaf');
+    const shape = leafShapes[i % leafShapes.length];
+    const blob = new Blob([shape], { type: 'image/svg+xml' });
+    const url  = URL.createObjectURL(blob);
+    const size = 24 + Math.random() * 36;
+    el.style.cssText = `
+      left: ${Math.random() * 100}%;
+      width: ${size}px;
+      height: ${size * 1.8}px;
+      animation-duration: ${14 + Math.random() * 20}s;
+      animation-delay: ${-Math.random() * 20}s;
+      background: url('${url}') center/contain no-repeat;
+    `;
+    bg.appendChild(el);
+  }
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
 </body>
 </html>
