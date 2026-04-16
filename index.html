@@ -30,7 +30,7 @@
       overflow-x: hidden;
     }
 
-    /* ── Video background ──────────────────────────────────────── */
+    /* ── Photo background (same as app pages) ─────────────────── */
     .bg-video {
       position: fixed;
       inset: 0;
@@ -38,8 +38,8 @@
       height: 100%;
       object-fit: cover;
       z-index: -2;
-      filter: blur(5px) saturate(1.3) brightness(0.85);
-      transform: scale(1.06);   /* hide blur edges */
+      filter: blur(6px) saturate(1.4) brightness(0.9);
+      transform: scale(1.07);   /* hide blur edges */
     }
 
     .bg-overlay {
@@ -526,8 +526,8 @@
         font-size: 0.78rem;
       }
 
-      /* Reduce video blur intensity on mobile for performance */
-      .bg-video { filter: blur(3px) saturate(1.2) brightness(0.85); }
+      /* Slightly less blur on mobile for performance */
+      .bg-video { filter: blur(4px) saturate(1.3) brightness(0.88); }
     }
 
     /* ── Extra small: ≤ 360px (very small phones) ──────────── */
@@ -540,10 +540,10 @@
 </head>
 <body>
 
-<!-- ── Video background (same as app) ──────────────────────────── -->
-<video class="bg-video" autoplay muted loop playsinline>
-  <source src="hero_video.mp4" type="video/mp4">
-</video>
+<!-- ── Background image (same photo as app pages) ──────────────── -->
+<img class="bg-video"
+     src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1400&q=85"
+     alt="" aria-hidden="true" />
 <div class="bg-overlay"></div>
 
 <div class="page">
