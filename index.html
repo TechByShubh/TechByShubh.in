@@ -381,13 +381,176 @@
     }
     footer a { color: var(--accent); text-decoration: none; }
 
-    /* ── Responsive ────────────────────────────────────────────── */
-    @media (max-width: 600px) {
-      nav { padding: 14px 20px; }
+    /* ══════════════════════════════════════════════════════════
+       RESPONSIVE — Desktop (default above), Tablet, Mobile
+    ══════════════════════════════════════════════════════════ */
+
+    /* ── Tablet: 481px – 768px ─────────────────────────────── */
+    @media (max-width: 768px) {
+      /* Nav */
+      nav { padding: 14px 24px; }
+      .nav-links { gap: 18px; }
+      .nav-links a { font-size: 0.85rem; }
+
+      /* Hero */
+      .hero { padding: 48px 20px 36px; min-height: 88vh; }
+      .hero-badge { font-size: 0.72rem; padding: 5px 13px; }
+      .hero-sub { font-size: 1rem; margin-bottom: 32px; }
+      .scroll-hint { margin-top: 36px; }
+
+      /* Download button */
+      .btn-download { font-size: 1.05rem; padding: 16px 32px; }
+
+      /* Stats */
+      .stats-row { gap: 14px; padding: 0 16px; margin-bottom: 56px; }
+      .stat-card { min-width: 130px; padding: 22px 14px; }
+      .stat-num { font-size: 2rem; }
+
+      /* Sections */
+      .section { padding: 60px 20px; }
+      .section-title { margin-bottom: 32px; }
+
+      /* Benefits: 2 columns on tablet */
+      .benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .benefit-card { padding: 18px 16px; gap: 12px; }
+      .benefit-icon { width: 36px; height: 36px; font-size: 1.05rem; }
+      .benefit-text { font-size: 0.87rem; }
+      .benefit-text strong { font-size: 0.91rem; }
+
+      /* Steps: 2 columns on tablet */
+      .steps { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+
+      /* CTA */
+      .cta-section { padding: 60px 20px; }
+      .cta-section .glass { padding: 40px 28px !important; }
+      .cta-section .btn-download { font-size: 1.1rem !important; padding: 18px 36px !important; }
+
+      /* Footer */
+      footer { padding: 24px 24px; }
+    }
+
+    /* ── Mobile: ≤ 480px ───────────────────────────────────── */
+    @media (max-width: 480px) {
+      /* Nav — hide links, keep logo */
+      nav { padding: 13px 16px; }
       .nav-links { display: none; }
-      .hero { padding: 40px 16px 32px; }
-      .section { padding: 56px 16px; }
-      footer { flex-direction: column; text-align: center; }
+      .nav-logo { font-size: 1.1rem; }
+      .nav-logo svg { width: 24px; height: 24px; }
+
+      /* Hero */
+      .hero {
+        padding: 36px 16px 28px;
+        min-height: auto;
+        padding-top: 48px;
+      }
+      .hero-badge {
+        font-size: 0.68rem;
+        padding: 5px 11px;
+        letter-spacing: 0.5px;
+        text-align: center;
+        line-height: 1.5;
+        white-space: normal;
+        max-width: 280px;
+      }
+      .hero h1 { letter-spacing: -0.5px; margin-bottom: 6px; }
+      .hero-sub {
+        font-size: 0.95rem;
+        margin-bottom: 28px;
+        margin-top: 10px;
+        max-width: 100%;
+      }
+
+      /* Download button: full width on mobile */
+      .btn-download {
+        width: 100%;
+        max-width: 340px;
+        justify-content: center;
+        font-size: 1rem;
+        padding: 16px 20px;
+        border-radius: 14px;
+      }
+      .btn-download svg { width: 20px; height: 20px; }
+      .download-note { font-size: 0.72rem; text-align: center; }
+      .scroll-hint { margin-top: 28px; }
+
+      /* Stats: 2×2 grid */
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 0 16px;
+        margin-bottom: 44px;
+      }
+      .stat-card {
+        min-width: unset;
+        max-width: unset;
+        padding: 18px 12px;
+        flex: unset;
+      }
+      .stat-num { font-size: 1.8rem; }
+      .stat-num span { font-size: 1.1rem; }
+      .stat-label { font-size: 0.7rem; }
+
+      /* Sections */
+      .section { padding: 48px 16px; }
+      .section-label { font-size: 0.72rem; }
+      .section-title { margin-bottom: 24px; }
+      .section-title br { display: none; }
+
+      /* Benefits: 1 column on mobile */
+      .benefits-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .benefit-card { padding: 16px 14px; gap: 12px; }
+      .benefit-icon { width: 36px; height: 36px; font-size: 1rem; border-radius: 10px; }
+      .benefit-text { font-size: 0.85rem; }
+      .benefit-text strong { font-size: 0.89rem; margin-bottom: 2px; }
+
+      /* Steps: 1 column on mobile */
+      .steps { grid-template-columns: 1fr; gap: 28px; }
+      .step-card { padding: 24px 18px 20px; }
+      .step-icon { font-size: 1.7rem; }
+
+      /* CTA section */
+      .cta-section { padding: 40px 16px; max-width: 100%; }
+      .cta-section .glass {
+        padding: 32px 20px !important;
+        border-radius: 20px !important;
+      }
+      .cta-section h2 br { display: none; }
+      .cta-section .btn-download {
+        width: 100% !important;
+        justify-content: center;
+        font-size: 1.05rem !important;
+        padding: 18px 20px !important;
+      }
+      .cta-section .download-note { font-size: 0.7rem; }
+
+      /* Footer */
+      footer {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px 16px;
+        gap: 10px;
+        font-size: 0.78rem;
+      }
+
+      /* Reduce glow on mobile for performance */
+      .glow { filter: blur(60px); }
+      .glow-1 { width: 280px; height: 280px; }
+      .glow-2 { width: 220px; height: 220px; }
+      .glow-3 { width: 180px; height: 180px; }
+    }
+
+    /* ── Extra small: ≤ 360px (very small phones) ──────────── */
+    @media (max-width: 360px) {
+      .hero h1 { font-size: 2.4rem; }
+      .btn-download { font-size: 0.92rem; }
+      .stat-num { font-size: 1.6rem; }
     }
   </style>
 </head>
